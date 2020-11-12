@@ -7,11 +7,18 @@
 
 <script>
 import HelloWorld from './components/HelloWorld.vue'
+import store from './store'
 
 export default {
   name: 'App',
   components: {
     HelloWorld
+  },
+  store,
+  computed: {
+    count () {
+      return this.$store.state.count
+    }
   }
 }
 </script>
