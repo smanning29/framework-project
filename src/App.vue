@@ -1,20 +1,38 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <canvas id="myCanvas"></canvas>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
 import store from './store'
+import * as THREE from 'three';
+
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
   },
   store,
+  methods: {
+    init: function(){
+      var container = document.getElementById('#myCanvas');
+      this.camera = new THREE.PerspectiveCamera(75, container.clientWidth/container.clientHeight, 1, 1000);
+      this.camera.position.z = 1;
+      this.scene = new THREE.Scene();
+      let geometry = new THREE.BoxGeometry(0.2, 0.2, 0.2);
+      let material = new THREE.MeshNormalMaterial();
+
+        this.mesh = new THREE.Mesh(geometry, material);
+        this.scene.add(this.mesh);
+
+        this.renderer = new THREE.WebGLRenderer({antialias: true});
+        this.renderer.setSize(container.clientWidth, container.clientHeight);
+        container.appendChild(this.renderer.domElement);
+
+
+    }
+  },
   computed: {
     count () {
       return this.$store.state.count
