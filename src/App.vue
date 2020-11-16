@@ -1,5 +1,8 @@
 <template>
-    <div id="container"></div>
+    <div id="container">
+      <input type="text" v-model="num" v-on:keyup.enter="secondCube(num)" placeholder=":)">
+    </div>
+    
 </template>
 
 <script>
@@ -41,6 +44,12 @@ export default {
         this.mesh.rotation.x += 0.01;
         this.mesh.rotation.y += 0.02;
         this.renderer.render(this.scene, this.camera);
+    },
+    secondCube: function(size) {
+      let geometry = new Three.BoxGeometry(size, size, size);
+      const material = new Three.MeshNormalMaterial();
+      this.mesh = new Three.Mesh(geometry, material);
+      this.scene.add(this.mesh);
     }
   },
   mounted() {
@@ -60,6 +69,6 @@ export default {
   margin-top: 60px;
 }
 #container {
-  max-width: 960px;
+  max-width: 100%;
 }
 </style>
