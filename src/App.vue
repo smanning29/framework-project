@@ -26,6 +26,13 @@ export default {
         this.camera = new Three.PerspectiveCamera(70, window.innerWidth/window.innerHeight, 0.01, 10);
         this.camera.position.z = 1;
 
+        window.addEventListener("resize", () => {
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
+        this.camera.aspect = window.innerWidth / window.innerHeight;
+
+        this.camera.updateProjectionMatrix();
+      });
+
         this.scene = new Three.Scene();
 
         let geometry = new Three.BoxGeometry(0.2, 0.2, 0.2);
@@ -66,9 +73,15 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  width: 100%;
+  height: 100%;
+  display: block;
+  margin: 0;
 }
 #container {
-  max-width: 100%;
+  width: 100%;
+  height: 100%;
+  display: block;
+
 }
 </style>
