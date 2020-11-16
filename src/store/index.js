@@ -5,6 +5,14 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    count: 0
+    count: 0,
+    width: 0,
+    height: 0,
+    camera: null,
+    scene: null,
+    renderer: null,
+  },
+  mutations: {
+    set
   }
 })
