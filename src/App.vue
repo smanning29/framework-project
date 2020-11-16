@@ -26,6 +26,7 @@ export default {
         this.camera = new Three.PerspectiveCamera(70, window.innerWidth/window.innerHeight, 0.01, 10);
         this.camera.position.z = 1;
 
+        //resize window
         window.addEventListener("resize", () => {
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.camera.aspect = window.innerWidth / window.innerHeight;
@@ -82,6 +83,5 @@ export default {
   width: 100%;
   height: 100%;
   display: block;
-
 }
 </style>
