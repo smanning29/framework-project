@@ -24,6 +24,7 @@
 <script>
 import * as THREE from 'three'
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { MathUtils } from "three/src/math/MathUtils.js"
 
 // import { GUI } from "../node_modules/three/examples/jsm/libs/dat.gui.module.js";
 // import { EffectComposer } from "../node_modules/three/examples/jsm/postprocessing/EffectComposer.js";
@@ -40,11 +41,15 @@ export default {
         camera: null,
         renderer: null,
         orbitControls: null,
-		controls: null,
+        controls: null,
+        mouseCoords: null,
+        down: false,
+        clickRequest: false,
         directionalLight: null,
         ambientLight: null,
 		hemisphereLight: null,
         cubes:[],
+        cubeMaterial: null,
     }),
     mounted() {
         this.init();
@@ -103,24 +108,31 @@ export default {
 
             //createCube
             let geometry = new THREE.BoxGeometry(0.2, 0.2, 0.2);
-            let material = new THREE.MeshNormalMaterial();
-
-            this.cubes.push(new THREE.Mesh(geometry, material));
-
+            this.material = new THREE.MeshNormalMaterial();
+            this.cubes.push(new THREE.Mesh(geometry, this.material));
             this.scene.add(this.cubes[0]);
+
+            // Setting hover handler
+			this.mouseCoords = new THREE.Vector2();
+            
+            //this.scene.add(this.cubes[0]);
             this.addControls();
             this.renderLoop();
         },
 
         renderLoop(){
             requestAnimationFrame(this.renderLoop);
+
             this.cubes.forEach((cube, ndx) => {
             const speed = .01 + ndx * 0.1;
 			cube.rotation.x += speed;
 			cube.rotation.y += speed;
             });
+
             this.renderer.render(this.scene, this.camera)
+
             this.orbitControls.update();
+            this.processClick();
         },
 
 		resizeHandler() {
@@ -134,6 +146,27 @@ export default {
             this.orbitControls = new OrbitControls(this.camera, this.renderer.domElement);
             this.orbitControls.update();
         },
+		setMouseVector(event) {
+				this.mouseCoords.x = (event.clientX / window.innerWidth) * 2 - 1;
+				this.mouseCoords.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+		},
+        processClick() {
+            if ( this.down == true ) {
+                // Creates a cube
+                const boxSize = MathUtils.randFloat(0.4,4.0)
+                const boxZPos = MathUtils.randInt(-10,10)
+                const box = new THREE.Mesh( new THREE.boxGeometry( boxSize, boxSize, boxSize ), this.material );
+                box.position.set(this.mouseCoords.x,this.mouseCoords.y,boxZPos)
+                this.cubes.push(box);
+                this.scene.add(box);
+                this.down = false;
+                console.log("click processed");
+            }
+        },
+
+
+
     }
   
 }
