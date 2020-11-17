@@ -1,6 +1,6 @@
 <template>
   <div id="VisualizationCanvas">
-      <script type="x-shader/x-vertex" id="vertexShader">
+      <!-- <script type="x-shader/x-vertex" id="vertexShader">
             uniform mat4 modelViewMatrix;
             uniform mat4 projectionMatrix;
             uniform float time;
@@ -17,7 +17,7 @@
             void main(){
                 gl_FragColor = vec4(0.5);
             }
-        </script>
+        </script> -->
   </div>
 </template>
 
@@ -50,6 +50,7 @@ export default {
 		hemisphereLight: null,
         cubes:[],
         cubeMaterial: null,
+        materialMesh: null, //can delete later
     }),
     mounted() {
         this.init();
@@ -113,7 +114,42 @@ export default {
             this.scene.add(this.cubes[0]);
 
             // Setting hover handler
-			this.mouseCoords = new THREE.Vector2();
+            this.mouseCoords = new THREE.Vector2();
+            
+            //Extra Particles to make it look good for milestone 2 can delete later
+            let vertexShader = `
+            uniform mat4 modelViewMatrix;
+            uniform mat4 projectionMatrix;
+            uniform float time;
+            attribute vec3 position;
+            attribute float size;
+            void main(){
+                gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+                gl_PointSize = 2.0 + size * abs(sin( time / size ));
+            }`;
+            let fragmentShader = `
+            void main(){
+                gl_FragColor = vec4(0.5);
+            }`;
+            this.materialMesh = new THREE.RawShaderMaterial({
+                uniforms: { time: { type: "f", value: 0.0 } },
+                vertexShader: vertexShader,
+                fragmentShader: fragmentShader,
+            });
+            this.geometryMesh = new THREE.BufferGeometry();
+            let position = [];
+            let size = [];
+            for (var i = 0; i < 50; i++) {
+                position.push(Math.random() * 100); // X
+                position.push(Math.random() * 60); // Y
+                position.push(Math.random() * 10); // Z
+                size.push(Math.random() * 15); // Z
+            }
+            this.geometryMesh.setAttribute("position", new THREE.BufferAttribute(new Float32Array(position), 3));
+            this.geometryMesh.setAttribute("size", new THREE.BufferAttribute(new Float32Array(size), 1));
+            let mesh = new THREE.Points(this.geometryMesh, this.materialMesh);
+            mesh.position.set(-50, -40, -30);
+            this.scene.add(mesh);
             
             //this.scene.add(this.cubes[0]);
             this.addControls();
@@ -122,7 +158,7 @@ export default {
 
         renderLoop(){
             requestAnimationFrame(this.renderLoop);
-
+            this.materialMesh.uniforms.time.value += 0.5;
             this.cubes.forEach((cube, ndx) => {
             const speed = .01 + ndx * 0.1;
 			cube.rotation.x += speed;
