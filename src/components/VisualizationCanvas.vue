@@ -1,23 +1,6 @@
 <template>
   <div id="VisualizationCanvas">
-      <!-- <script type="x-shader/x-vertex" id="vertexShader">
-            uniform mat4 modelViewMatrix;
-            uniform mat4 projectionMatrix;
-            uniform float time;
-
-            attribute vec3 position;
-            attribute float size;
-                
-            void main(){
-                gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
-                gl_PointSize = 2.0 + size * abs(sin( time / size ));
-            }
-		</script>
-		<script type="x-shader/x-fragment" id="fragmentShader">
-            void main(){
-                gl_FragColor = vec4(0.5);
-            }
-        </script> -->
+      
   </div>
 </template>
 
