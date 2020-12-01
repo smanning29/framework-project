@@ -37,11 +37,13 @@ export default {
     }),
     mounted() {
         this.init();
+        this.renderCube();
     },
     methods:{
         init(){
             let width = window.innerWidth,
-				height = window.innerHeight;
+                height = window.innerHeight;
+                
 			//Scene
 			this.scene = new THREE.Scene();
 			this.scene.background = new THREE.Color(0xbbd6ff);
@@ -91,13 +93,13 @@ export default {
             window.addEventListener("resize", this.resizeHandler);
 
             //createCube
-            let geometry = new THREE.BoxGeometry(0.2, 0.2, 0.2);
-            this.material = new THREE.MeshNormalMaterial();
-            this.cubes.push(new THREE.Mesh(geometry, this.material));
-            this.scene.add(this.cubes[0]);
+            // let geometry = new THREE.BoxGeometry(0.2, 0.2, 0.2);
+            // this.material = new THREE.MeshNormalMaterial();
+            // this.cubes.push(new THREE.Mesh(geometry, this.material));
+            // this.scene.add(this.cubes[0]);
 
             // Setting hover handler
-            this.mouseCoords = new THREE.Vector2();
+            //this.mouseCoords = new THREE.Vector2();
             
             //Extra Particles to make it look good for milestone 2 can delete later
             let vertexShader = `
@@ -182,6 +184,12 @@ export default {
                 this.down = false;
                 console.log("click processed");
             }
+        },
+        renderCube(){
+            let geometry = new THREE.BoxGeometry(0.2, 0.2, 0.2);
+            this.material = new THREE.MeshNormalMaterial();
+            this.cubes.push(new THREE.Mesh(geometry, this.material));
+            this.scene.add(this.cubes[0]);
         },
 
 
