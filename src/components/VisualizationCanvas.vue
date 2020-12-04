@@ -19,6 +19,7 @@ export default {
     props: {
         cubeProps: Array,
         numCubes: Number,
+        userReset: Boolean,
     },
     data: () => ({
         scene: null,
@@ -38,7 +39,8 @@ export default {
         lastX: 0,
         lastY: 0,
         lastZ: 0,
-        currLoop: 1
+        currLoop: 1,
+        meshStars: null,
     }),
     mounted() {
         this.init();
@@ -47,6 +49,7 @@ export default {
     },
     methods:{
         init(){
+            this.userReset = false;
             let width = window.innerWidth,
                 height = window.innerHeight;
                 
@@ -71,20 +74,20 @@ export default {
 
             // Ambient Light
 			this.ambientLight = new THREE.AmbientLight(0xffffff, 1);
-			this.scene.add(this.ambientLight);
+			// this.scene.add(this.ambientLight);
 			// LIGHTS
 			this.hemisphereLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 0.1);
 			this.hemisphereLight.color.setHSL(0.6, 1, 0.6);
 			this.hemisphereLight.groundColor.setHex(0x87775d);
 			this.hemisphereLight.position.set(0, 5, 0);
-			this.scene.add(this.hemisphereLight);
+			// this.scene.add(this.hemisphereLight);
 			// let hemiLightHelper = new THREE.HemisphereLightHelper(this.hemisphereLight, 10);
 			// this.scene.add(hemiLightHelper);
 			this.directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
 			this.directionalLight.color.setHSL(0.1, 1, 0.95);
 			this.directionalLight.position.set(-1, 1.75, 1);
 			this.directionalLight.position.multiplyScalar(70);
-			this.scene.add(this.directionalLight);
+			// this.scene.add(this.directionalLight);
 			this.directionalLight.castShadow = true;
 			this.directionalLight.shadow.mapSize.width = 2048;
 			this.directionalLight.shadow.mapSize.height = 2048;
@@ -97,12 +100,6 @@ export default {
             
             //Resize handler
             window.addEventListener("resize", this.resizeHandler);
-
-            //createCube
-            // let geometry = new THREE.BoxGeometry(0.2, 0.2, 0.2);
-            // this.material = new THREE.MeshNormalMaterial();
-            // this.cubes.push(new THREE.Mesh(geometry, this.material));
-            // this.scene.add(this.cubes[0]);
 
             // Setting hover handler
             //this.mouseCoords = new THREE.Vector2();
@@ -138,15 +135,23 @@ export default {
             }
             this.geometryMesh.setAttribute("position", new THREE.BufferAttribute(new Float32Array(position), 3));
             this.geometryMesh.setAttribute("size", new THREE.BufferAttribute(new Float32Array(size), 1));
-            let mesh = new THREE.Points(this.geometryMesh, this.materialMesh);
-            mesh.position.set(-50, -40, -30);
-            this.scene.add(mesh);
+            this.meshStars = new THREE.Points(this.geometryMesh, this.materialMesh);
+            this.meshStars.position.set(-50, -40, -30);
+
+            this.initAddToScene();
+            // this.scene.add(mesh);
             
-            //this.scene.add(this.cubes[0]);
+            // this.addControls();
+            // this.renderLoop();
+        },
+        initAddToScene(){
+            this.scene.add(this.ambientLight);
+            this.scene.add(this.hemisphereLight);
+            this.scene.add(this.directionalLight);
+            this.scene.add(this.meshStars);
             this.addControls();
             this.renderLoop();
         },
-
         renderLoop(){
             requestAnimationFrame(this.renderLoop);
             this.materialMesh.uniforms.time.value += 0.5;
@@ -161,6 +166,7 @@ export default {
             this.orbitControls.update();
             this.processClick();
             this.cubeLoop();
+            this.resetScene();
         },
 
 		resizeHandler() {
@@ -198,16 +204,7 @@ export default {
             this.cubes.push(new THREE.Mesh(geometry, this.material));
             this.scene.add(this.cubes[0]);
         },
-        // cubeLoop(){
-        //     let geometry = new THREE.BoxGeometry(0.2, 0.2, 0.2);
-        //     this.material = new THREE.MeshNormalMaterial();
-
-        //     for(var i=0;i<this.numCubes;i++){
-        //         //this.cubes.push());
-        //         this.scene.add(new THREE.Mesh(geometry, this.material));
-        //     }
-        // }
-          randomCube(){
+        randomCube(){
             var geometry = new THREE.BoxGeometry(0.2,0.2,0.2);
             var material = new THREE.MeshNormalMaterial();
             for (let i = 0; i < 10; i++) {
@@ -224,19 +221,27 @@ export default {
             if(this.currLoop == this.numCubes){
                 var geometry = new THREE.BoxGeometry(0.2,0.2,0.2);
                 var material = new THREE.MeshNormalMaterial();
-                for (let i = 0; i < this.numCubes; i++) {
-
-                    var mesh = new THREE.Mesh(geometry, material);
-                    mesh.position.x = (this.lastX);
-                    mesh.position.y = (this.lastY);
-                    mesh.position.z = (this.lastZ);
-                    this.scene.add(mesh);
-                    this.lastX = this.lastX + 1;
-                    console.log(this.lastX);
-                    this.currLoop++;
-                }
+                var mesh = new THREE.Mesh(geometry, material);
+                mesh.position.x = (this.lastX);
+                mesh.position.y = (this.lastY);
+                mesh.position.z = (this.lastZ);
+                this.scene.add(mesh);
+                this.lastX = this.lastX + 1;
+                console.log(this.lastX);
+                this.currLoop++;
             }
             
+        },
+        resetScene(){
+            if(this.userReset == true){
+                while(this.scene.children.length > 0){ 
+                    this.scene.remove(this.scene.children[0]); 
+                }
+                if (this.scene.children.length == 0) {
+                    this.userReset = false;
+                    //seperate init into two functions, one with things needed to add to scene, and one with nessesary things
+                }
+            }
         }
 
 

@@ -1,6 +1,6 @@
 <template>
   <div class="MommaComponent">
-    <VisualizationCanvas v-bind:num-cubes="this.count"/>
+    <VisualizationCanvas v-bind:num-cubes="this.count" v-bind:user-reset="this.resetBool"/>
     <div class="Buttons">
     <Button v-on:click="increment()">
       Visualize!
@@ -8,7 +8,7 @@
     <Button>
       Create Random!
     </Button>
-    <Button>
+    <Button v-on:click="userReset()">
       Reset
     </Button>
     </div>
@@ -27,14 +27,26 @@ export default {
   data: function() {
     return {
       count: 1,
-      cubesInfo: []
+      resetBool: false,
+      resetState: 0,
+      cubesInfo: [],
     }
   },
   methods: {
     increment(){
       this.count++;
       this.cubesInfo[0] = this.count;
-    }
+    },
+    userReset(){
+      this.resetBool = true;
+      // if (this.resetBool && this.resetState == 0) {
+      //   this.resetBool = false;
+      //   this.resetState = 1;
+      // }
+      // if( !this.resetBool && this.resetState == 1){
+      //   this.resetState = 0;
+      // }
+    },
   }
 }
 </script>
