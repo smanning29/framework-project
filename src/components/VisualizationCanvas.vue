@@ -211,7 +211,7 @@ export default {
             if(this.userReset == true){
                 //try to fix user reset first
                 while(this.scene.children.length > 0){ 
-                //     this.scene.remove(this.scene.children[0]); 
+                  this.scene.remove(this.scene.children[0]); 
                 }
                 if (this.scene.children.length == 0) {
                     this.userReset = false;
