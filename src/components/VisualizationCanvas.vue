@@ -255,7 +255,7 @@ export default {
             this.resetScene(this.userReset);
             this.changeSiteMode();
             this.glassCube();
-            console.log("resetbool:" + this.userReset);
+            // console.log("resetbool:" + this.userReset);
         },
 		resizeHandler() {
 			let width = window.innerWidth,
@@ -305,11 +305,11 @@ export default {
             let position = [];
             let size = [];
             //quadrant 1
-            for (var i = 0; i < 50; i++) {
-                position.push(Math.random() * 100); // X
-                position.push(Math.random() * 60); // Y
-                position.push(Math.random() * 10); // Z
-                size.push(Math.random() * 15); // Z
+            for (var i = 0; i < 500; i++) {
+                position.push(Math.random() * 500); // X
+                position.push(Math.random() * 500); // Y
+                position.push(Math.random() * 500); // Z
+                size.push(Math.random() * 5); // Z
             }
 
             
@@ -319,7 +319,7 @@ export default {
             this.meshStars = new THREE.Points(this.geometryMesh, this.materialMesh);
             this.meshStars.name = "backgroundStars";
             //
-            this.meshStars.position.set(-50, -40, -30);
+            this.meshStars.position.set(-250, -250, -250);
             this.scene.add(this.meshStars);
             
         },
