@@ -1,12 +1,15 @@
 <template>
   <div class="MommaComponent">
-    <VisualizationCanvas v-bind:num-cubes="this.count" v-bind:user-reset="this.resetBool" v-bind:site-mode="this.lightMode"/>
+    <VisualizationCanvas v-bind:num-cubes="this.count" v-bind:user-reset="this.resetBool" v-bind:site-mode="this.lightMode" v-bind:num-vertex="this.numVerticies" />
     <div class="Buttons">
     <Button v-on:click="increment()">
       Duplicate
     </Button>
     <Button v-on:click="switchMode()">
       Day / Night
+    </Button>
+    <Button v-on:click="addVerticies()">
+      Add Glass
     </Button>
     <Button v-on:click="userReset()">
       Reset
@@ -31,6 +34,7 @@ export default {
       resetState: 0,
       cubesInfo: [],
       lightMode: true,
+      numVerticies: 50
     }
   },
   methods: {
@@ -50,6 +54,9 @@ export default {
         this.lightMode = true;
         console.log("true");
       }
+    },
+    addVerticies(){
+        this.numVerticies += 50;
     }
   }
 }

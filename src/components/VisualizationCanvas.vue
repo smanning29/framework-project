@@ -21,6 +21,7 @@ export default {
         numCubes: Number,
         userReset: Boolean,
         siteMode: Boolean,
+        numVertex: Number,
     },
     data: () => ({
         scene: null,
@@ -47,6 +48,7 @@ export default {
         fragmentShaderGlass: ` `,
         vertexShaderGlass: ` `,
         currMode: true,
+        currNumVertex: 50
 
     }),
     mounted() {
@@ -165,17 +167,20 @@ export default {
 				gl_FragColor = color;
 
             }`;
-            this.glassCube();
-            this.addControls();
-            this.renderLoop();
             this.initAddToScene();
             // this.scene.add(mesh);
             
             // this.addControls();
             // this.renderLoop();
+            this.renderLoop();
         },
         initAddToScene(){
+            this.numVertex = 50;
+            this.glassCube();
+            this.addControls();
            this.bgStars();
+
+           
         },
 
         renderLoop(){
@@ -203,6 +208,7 @@ export default {
             this.cubeLoop();
             this.resetScene();
             this.changeSiteMode();
+            this.glassCube()
         },
 		resizeHandler() {
 			let width = window.innerWidth,
@@ -271,53 +277,56 @@ export default {
             
         },
         glassCube(){
-            const vertexCount = 50 * 3;
+            if(this.currNumVertex == this.numVertex){
+                const vertexCount = this.numVertex;
 
-            const geometryGlass = new THREE.BufferGeometry();
+                const geometryGlass = new THREE.BufferGeometry();
 
-            const positions = [];
-            const colors = [];
+                const positions = [];
+                const colors = [];
 
-            for ( let i = 0; i < vertexCount; i ++ ) {
+                for ( let i = 0; i < vertexCount; i ++ ) {
 
-                // adding x,y,z
-                positions.push( Math.random() - 0.5 );
-                positions.push( Math.random() - 0.5 );
-                positions.push( Math.random() - 0.5 );
+                    // adding x,y,z
+                    positions.push( Math.random() - 0.5 );
+                    positions.push( Math.random() - 0.5 );
+                    positions.push( Math.random() - 0.5 );
 
-                // adding r,g,b,a
-                colors.push( Math.random() * 255 );
-                colors.push( Math.random() * 255 );
-                colors.push( Math.random() * 255 );
-                colors.push( Math.random() * 255 );
+                    // adding r,g,b,a
+                    colors.push( Math.random() * 255 );
+                    colors.push( Math.random() * 255 );
+                    colors.push( Math.random() * 255 );
+                    colors.push( Math.random() * 255 );
 
+                }
+
+                const positionAttribute = new THREE.Float32BufferAttribute( positions, 3 );
+                const colorAttribute = new THREE.Uint8BufferAttribute( colors, 4 );
+
+                colorAttribute.normalized = true; // this will map the buffer values to 0.0f - +1.0f in the shader
+
+                geometryGlass.setAttribute( 'position', positionAttribute );
+                geometryGlass.setAttribute( 'color', colorAttribute );
+
+                // material
+
+                const materialGlass = new THREE.RawShaderMaterial( {
+
+                    uniforms: {
+                        time: { value: 1.0 }
+                    },
+                    vertexShader: this.vertexShaderGlass,
+                    fragmentShader: this.fragmentShaderGlass,
+                    side: THREE.DoubleSide,
+                    transparent: true
+
+                } );
+
+                const meshGlass = new THREE.Mesh( geometryGlass, materialGlass );
+                meshGlass.name = "glass";
+                this.scene.add( meshGlass );
+                this.currNumVertex += 50;
             }
-
-            const positionAttribute = new THREE.Float32BufferAttribute( positions, 3 );
-            const colorAttribute = new THREE.Uint8BufferAttribute( colors, 4 );
-
-            colorAttribute.normalized = true; // this will map the buffer values to 0.0f - +1.0f in the shader
-
-            geometryGlass.setAttribute( 'position', positionAttribute );
-            geometryGlass.setAttribute( 'color', colorAttribute );
-
-            // material
-
-            const materialGlass = new THREE.RawShaderMaterial( {
-
-                uniforms: {
-                    time: { value: 1.0 }
-                },
-                vertexShader: this.vertexShaderGlass,
-                fragmentShader: this.fragmentShaderGlass,
-                side: THREE.DoubleSide,
-                transparent: true
-
-            } );
-
-            const meshGlass = new THREE.Mesh( geometryGlass, materialGlass );
-            meshGlass.name = "glass";
-            this.scene.add( meshGlass );
         },
         changeSiteMode(){
         if(this.currMode == this.siteMode){
@@ -352,6 +361,7 @@ export default {
 
                 if (this.scene.children.length == 0) {
                     this.userReset = false;
+                    this.currNumVertex = 50;
                     this.initAddToScene();
                     //seperate init into two functions, one with things needed to add to scene, and one with nessesary things
                 }
