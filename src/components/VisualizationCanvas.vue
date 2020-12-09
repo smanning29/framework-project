@@ -44,7 +44,9 @@ export default {
         meshStars: null,
         fragmentShader: ` `,
         vertexShader: ` `,
-        currMode: true
+        fragmentShaderGlass: ` `,
+        vertexShaderGlass: ` `,
+        currMode: true,
 
     }),
     mounted() {
@@ -55,18 +57,13 @@ export default {
             this.userReset = false;
             let width = window.innerWidth,
                 height = window.innerHeight;
-                
 			//Scene
 			this.scene = new THREE.Scene();
 			this.scene.background = new THREE.Color(0x171137);
 			this.scene.fog = new THREE.Fog(0xffffff, 0, 750);
 			//Camera
 			this.camera = new THREE.PerspectiveCamera(70, width / height, 0.1, 1000);
-			// this.camera.position.y = this.cameraY + 2000;
-			// this.camera.position.x = -500;
 			this.camera.position.z = 1;
-			// var helper = new THREE.CameraHelper(this.camera);
-            // this.scene.add(helper);
             
 			//Renderer
 			this.renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -107,7 +104,7 @@ export default {
             // Setting hover handler
             //this.mouseCoords = new THREE.Vector2();
 
-            //setting up material and shaders
+            //setting up material and shaders for stars
             this.vertexShader = `
             uniform mat4 modelViewMatrix;
             uniform mat4 projectionMatrix;
@@ -128,7 +125,47 @@ export default {
                 vertexShader: this.vertexShader,
                 fragmentShader: this.fragmentShader,
             });
-            
+
+            //setup shader for glass cube
+            this.vertexShaderGlass = `
+           precision mediump float;
+			precision mediump int;
+
+			uniform mat4 modelViewMatrix; // optional
+			uniform mat4 projectionMatrix; // optional
+
+			attribute vec3 position;
+			attribute vec4 color;
+
+			varying vec3 vPosition;
+			varying vec4 vColor;
+
+			void main()	{
+
+				vPosition = position;
+				vColor = color;
+
+				gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+
+			}`;
+            this.fragmentShaderGlass = `
+           	precision mediump float;
+			precision mediump int;
+
+			uniform float time;
+
+			varying vec3 vPosition;
+			varying vec4 vColor;
+
+			void main()	{
+
+				vec4 color = vec4( vColor );
+				color.r += sin( vPosition.x * 10.0 + time ) * 0.5;
+
+				gl_FragColor = color;
+
+            }`;
+            this.glassCube();
             this.addControls();
             this.renderLoop();
             this.initAddToScene();
@@ -150,6 +187,15 @@ export default {
 			cube.rotation.x += speed;
 			cube.rotation.y += speed;
             });
+
+            //rotate glass
+            // const time = performance.now();
+
+            // const object = this.scene.getObjectByName("glass");
+
+            // object.rotation.y = time * 0.0005;
+            // object.material.uniforms.time.value = time * 0.005;
+
 
             this.renderer.render(this.scene, this.camera)
             this.orbitControls.update();
@@ -212,17 +258,67 @@ export default {
                 position.push(Math.random() * 10); // Z
                 size.push(Math.random() * 15); // Z
             }
-        
+
             
             this.materialMesh.fragmentShader = this.fragmentShader;
             this.geometryMesh.setAttribute("position", new THREE.BufferAttribute(new Float32Array(position), 3));
             this.geometryMesh.setAttribute("size", new THREE.BufferAttribute(new Float32Array(size), 1));
             this.meshStars = new THREE.Points(this.geometryMesh, this.materialMesh);
-            this.meshStars.position.set(-50, -40, -30);
             this.meshStars.name = "backgroundStars";
+            //
+            this.meshStars.position.set(-50, -40, -30);
             this.scene.add(this.meshStars);
+            
         },
+        glassCube(){
+            const vertexCount = 50 * 3;
 
+            const geometryGlass = new THREE.BufferGeometry();
+
+            const positions = [];
+            const colors = [];
+
+            for ( let i = 0; i < vertexCount; i ++ ) {
+
+                // adding x,y,z
+                positions.push( Math.random() - 0.5 );
+                positions.push( Math.random() - 0.5 );
+                positions.push( Math.random() - 0.5 );
+
+                // adding r,g,b,a
+                colors.push( Math.random() * 255 );
+                colors.push( Math.random() * 255 );
+                colors.push( Math.random() * 255 );
+                colors.push( Math.random() * 255 );
+
+            }
+
+            const positionAttribute = new THREE.Float32BufferAttribute( positions, 3 );
+            const colorAttribute = new THREE.Uint8BufferAttribute( colors, 4 );
+
+            colorAttribute.normalized = true; // this will map the buffer values to 0.0f - +1.0f in the shader
+
+            geometryGlass.setAttribute( 'position', positionAttribute );
+            geometryGlass.setAttribute( 'color', colorAttribute );
+
+            // material
+
+            const materialGlass = new THREE.RawShaderMaterial( {
+
+                uniforms: {
+                    time: { value: 1.0 }
+                },
+                vertexShader: this.vertexShaderGlass,
+                fragmentShader: this.fragmentShaderGlass,
+                side: THREE.DoubleSide,
+                transparent: true
+
+            } );
+
+            const meshGlass = new THREE.Mesh( geometryGlass, materialGlass );
+            meshGlass.name = "glass";
+            this.scene.add( meshGlass );
+        },
         changeSiteMode(){
         if(this.currMode == this.siteMode){
             if(this.siteMode == true){
