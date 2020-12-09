@@ -3,7 +3,7 @@
     <VisualizationCanvas v-bind:num-cubes="this.count"/>
     <div class="Buttons">
     <Button v-on:click="increment()">
-      Visualize!
+      Duplicate
     </Button>
     <Button>
       Create Random!
