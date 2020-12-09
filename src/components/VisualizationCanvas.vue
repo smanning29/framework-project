@@ -44,8 +44,6 @@ export default {
     }),
     mounted() {
         this.init();
-        //this.renderCube();
-        //this.cubeLoop();
     },
     methods:{
         init(){
@@ -74,15 +72,15 @@ export default {
 
             // Ambient Light
 			this.ambientLight = new THREE.AmbientLight(0xffffff, 1);
-			// this.scene.add(this.ambientLight);
+			this.scene.add(this.ambientLight);
 			// LIGHTS
 			this.hemisphereLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 0.1);
 			this.hemisphereLight.color.setHSL(0.6, 1, 0.6);
 			this.hemisphereLight.groundColor.setHex(0x87775d);
 			this.hemisphereLight.position.set(0, 5, 0);
-			// this.scene.add(this.hemisphereLight);
-			// let hemiLightHelper = new THREE.HemisphereLightHelper(this.hemisphereLight, 10);
-			// this.scene.add(hemiLightHelper);
+			this.scene.add(this.hemisphereLight);
+			let hemiLightHelper = new THREE.HemisphereLightHelper(this.hemisphereLight, 10);
+			this.scene.add(hemiLightHelper);
 			this.directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
 			this.directionalLight.color.setHSL(0.1, 1, 0.95);
 			this.directionalLight.position.set(-1, 1.75, 1);
@@ -119,11 +117,13 @@ export default {
             void main(){
                 gl_FragColor = vec4(0.5);
             }`;
+
             this.materialMesh = new THREE.RawShaderMaterial({
                 uniforms: { time: { type: "f", value: 0.0 } },
                 vertexShader: vertexShader,
                 fragmentShader: fragmentShader,
             });
+
             this.geometryMesh = new THREE.BufferGeometry();
             let position = [];
             let size = [];
@@ -133,11 +133,13 @@ export default {
                 position.push(Math.random() * 10); // Z
                 size.push(Math.random() * 15); // Z
             }
+            
             this.geometryMesh.setAttribute("position", new THREE.BufferAttribute(new Float32Array(position), 3));
             this.geometryMesh.setAttribute("size", new THREE.BufferAttribute(new Float32Array(size), 1));
             this.meshStars = new THREE.Points(this.geometryMesh, this.materialMesh);
             this.meshStars.position.set(-50, -40, -30);
-
+            this.addControls();
+            this.renderLoop();
             this.initAddToScene();
             // this.scene.add(mesh);
             
@@ -145,16 +147,12 @@ export default {
             // this.renderLoop();
         },
         initAddToScene(){
-            this.scene.add(this.ambientLight);
-            this.scene.add(this.hemisphereLight);
-            this.scene.add(this.directionalLight);
             this.scene.add(this.meshStars);
-            this.addControls();
-            this.renderLoop();
         },
         renderLoop(){
             requestAnimationFrame(this.renderLoop);
             this.materialMesh.uniforms.time.value += 0.5;
+
             this.cubes.forEach((cube, ndx) => {
             const speed = .01 + ndx * 0.1;
 			cube.rotation.x += speed;
@@ -162,13 +160,11 @@ export default {
             });
 
             this.renderer.render(this.scene, this.camera)
-
             this.orbitControls.update();
             this.processClick();
             this.cubeLoop();
             this.resetScene();
         },
-
 		resizeHandler() {
 			let width = window.innerWidth,
 			height = window.innerHeight;
@@ -183,7 +179,6 @@ export default {
 		setMouseVector(event) {
 				this.mouseCoords.x = (event.clientX / window.innerWidth) * 2 - 1;
 				this.mouseCoords.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
 		},
         processClick() {
             if ( this.down == true ) {
@@ -198,25 +193,6 @@ export default {
                 console.log("click processed");
             }
         },
-        renderCube(){
-            let geometry = new THREE.BoxGeometry(0.2, 0.2, 0.2);
-            this.material = new THREE.MeshNormalMaterial();
-            this.cubes.push(new THREE.Mesh(geometry, this.material));
-            this.scene.add(this.cubes[0]);
-        },
-        randomCube(){
-            var geometry = new THREE.BoxGeometry(0.2,0.2,0.2);
-            var material = new THREE.MeshNormalMaterial();
-            for (let i = 0; i < 10; i++) {
-
-                var mesh = new THREE.Mesh(geometry, material);
-                mesh.position.x = (Math.random()-0.5 * 10);
-                mesh.position.y = (Math.random()-0.5 * 10);
-                mesh.position.z = (Math.random()-0.5 * 10);
-                this.scene.add(mesh);
-            }
-        },
-
         cubeLoop(){
             if(this.currLoop == this.numCubes){
                 var geometry = new THREE.BoxGeometry(0.2,0.2,0.2);
@@ -230,23 +206,20 @@ export default {
                 console.log(this.lastX);
                 this.currLoop++;
             }
-            
         },
         resetScene(){
             if(this.userReset == true){
+                //try to fix user reset first
                 while(this.scene.children.length > 0){ 
-                    this.scene.remove(this.scene.children[0]); 
+                //     this.scene.remove(this.scene.children[0]); 
                 }
                 if (this.scene.children.length == 0) {
                     this.userReset = false;
+                    //this.initAddToScene();
                     //seperate init into two functions, one with things needed to add to scene, and one with nessesary things
                 }
             }
         }
-
-
-
-
     }
   
 }
