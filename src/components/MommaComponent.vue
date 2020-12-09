@@ -1,6 +1,6 @@
 <template>
   <div class="MommaComponent">
-    <VisualizationCanvas v-bind:num-cubes="this.count" v-bind:user-reset="this.resetBool" v-bind:site-mode="this.lightMode" v-bind:num-vertex="this.numVerticies" />
+    <VisualizationCanvas v-bind:num-cubes="this.count" v-bind:user-reset="this.resetCurr" v-bind:site-mode="this.lightMode" v-bind:num-vertex="this.numVerticies" />
     <div class="Buttons">
     <Button v-on:click="increment()">
       Duplicate
@@ -11,7 +11,7 @@
     <Button v-on:click="addVerticies()">
       Add Glass
     </Button>
-    <Button v-on:click="userReset()">
+    <Button v-on:click="userReset().then(userReset());">
       Reset
     </Button>
     </div>
@@ -30,8 +30,8 @@ export default {
   data: function() {
     return {
       count: 1,
-      resetBool: false,
-      resetState: 0,
+      resetCurr: null,
+      resetPrev: null,
       cubesInfo: [],
       lightMode: true,
       numVerticies: 50
@@ -43,7 +43,10 @@ export default {
       this.cubesInfo[0] = this.count;
     },
     userReset(){
-      this.resetBool = true;
+      this.resetCurr = true;
+    },
+    userUnReset(){
+      this.resetCurr = false;
     },
     switchMode(){
       if(this.lightMode == true){

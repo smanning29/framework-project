@@ -178,7 +178,7 @@ export default {
             this.numVertex = 50;
             this.glassCube();
             this.addControls();
-           this.bgStars();
+            this.bgStars();
 
            
         },
@@ -206,9 +206,10 @@ export default {
             this.orbitControls.update();
             this.processClick();
             this.cubeLoop();
-            this.resetScene();
+            this.resetScene(this.userReset);
             this.changeSiteMode();
-            this.glassCube()
+            this.glassCube();
+            console.log("resetbool:" + this.userReset);
         },
 		resizeHandler() {
 			let width = window.innerWidth,
@@ -326,6 +327,8 @@ export default {
                 meshGlass.name = "glass";
                 this.scene.add( meshGlass );
                 this.currNumVertex += 50;
+                // console.log("currNumVertex:" + this.currNumVertex);
+                // console.log("NumVertex:" + this. numVertex)
             }
         },
         changeSiteMode(){
@@ -352,8 +355,10 @@ export default {
         }
         },
 
-        resetScene(){
-            if(this.userReset == true){
+        resetScene(resetStatus){
+
+            if(resetStatus == true){
+            console.log("scene being reset");
                 //try to fix user reset first
                 while(this.scene.children.length > 0){ 
                      this.scene.remove(this.scene.children[0]); 
@@ -361,8 +366,9 @@ export default {
 
                 if (this.scene.children.length == 0) {
                     this.userReset = false;
-                    this.currNumVertex = 50;
                     this.initAddToScene();
+                    this.currNumVertex = 50;
+
                     //seperate init into two functions, one with things needed to add to scene, and one with nessesary things
                 }
             }
