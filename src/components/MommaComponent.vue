@@ -1,12 +1,12 @@
 <template>
   <div class="MommaComponent">
-    <VisualizationCanvas v-bind:num-cubes="this.count" v-bind:user-reset="this.resetBool"/>
+    <VisualizationCanvas v-bind:num-cubes="this.count" v-bind:user-reset="this.resetBool" v-bind:site-mode="this.lightMode"/>
     <div class="Buttons">
     <Button v-on:click="increment()">
       Duplicate
     </Button>
-    <Button>
-      Create Random!
+    <Button v-on:click="switchMode()">
+      Day / Night
     </Button>
     <Button v-on:click="userReset()">
       Reset
@@ -30,6 +30,7 @@ export default {
       resetBool: false,
       resetState: 0,
       cubesInfo: [],
+      lightMode: true,
     }
   },
   methods: {
@@ -39,14 +40,17 @@ export default {
     },
     userReset(){
       this.resetBool = true;
-      // if (this.resetBool && this.resetState == 0) {
-      //   this.resetBool = false;
-      //   this.resetState = 1;
-      // }
-      // if( !this.resetBool && this.resetState == 1){
-      //   this.resetState = 0;
-      // }
     },
+    switchMode(){
+      if(this.lightMode == true){
+        this.lightMode = false;
+        console.log("false");
+      }
+      else{
+        this.lightMode = true;
+        console.log("true");
+      }
+    }
   }
 }
 </script>

@@ -20,6 +20,7 @@ export default {
         cubeProps: Array,
         numCubes: Number,
         userReset: Boolean,
+        siteMode: Boolean,
     },
     data: () => ({
         scene: null,
@@ -41,6 +42,10 @@ export default {
         lastZ: 0,
         currLoop: 1,
         meshStars: null,
+        fragmentShader: ` `,
+        vertexShader: ` `,
+        currMode: true
+
     }),
     mounted() {
         this.init();
@@ -53,7 +58,7 @@ export default {
                 
 			//Scene
 			this.scene = new THREE.Scene();
-			this.scene.background = new THREE.Color(0xbbd6ff);
+			this.scene.background = new THREE.Color(0x171137);
 			this.scene.fog = new THREE.Fog(0xffffff, 0, 750);
 			//Camera
 			this.camera = new THREE.PerspectiveCamera(70, width / height, 0.1, 1000);
@@ -101,9 +106,9 @@ export default {
 
             // Setting hover handler
             //this.mouseCoords = new THREE.Vector2();
-            
-            //Extra Particles to make it look good for milestone 2 can delete later
-            let vertexShader = `
+
+            //setting up material and shaders
+            this.vertexShader = `
             uniform mat4 modelViewMatrix;
             uniform mat4 projectionMatrix;
             uniform float time;
@@ -113,31 +118,17 @@ export default {
                 gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
                 gl_PointSize = 2.0 + size * abs(sin( time / size ));
             }`;
-            let fragmentShader = `
+            this.fragmentShader = `
             void main(){
-                gl_FragColor = vec4(0.5);
+                gl_FragColor = vec4(247,233,156,0.9);
             }`;
 
             this.materialMesh = new THREE.RawShaderMaterial({
                 uniforms: { time: { type: "f", value: 0.0 } },
-                vertexShader: vertexShader,
-                fragmentShader: fragmentShader,
+                vertexShader: this.vertexShader,
+                fragmentShader: this.fragmentShader,
             });
-
-            this.geometryMesh = new THREE.BufferGeometry();
-            let position = [];
-            let size = [];
-            for (var i = 0; i < 50; i++) {
-                position.push(Math.random() * 100); // X
-                position.push(Math.random() * 60); // Y
-                position.push(Math.random() * 10); // Z
-                size.push(Math.random() * 15); // Z
-            }
             
-            this.geometryMesh.setAttribute("position", new THREE.BufferAttribute(new Float32Array(position), 3));
-            this.geometryMesh.setAttribute("size", new THREE.BufferAttribute(new Float32Array(size), 1));
-            this.meshStars = new THREE.Points(this.geometryMesh, this.materialMesh);
-            this.meshStars.position.set(-50, -40, -30);
             this.addControls();
             this.renderLoop();
             this.initAddToScene();
@@ -147,8 +138,9 @@ export default {
             // this.renderLoop();
         },
         initAddToScene(){
-            this.scene.add(this.meshStars);
+           this.bgStars();
         },
+
         renderLoop(){
             requestAnimationFrame(this.renderLoop);
             this.materialMesh.uniforms.time.value += 0.5;
@@ -164,6 +156,7 @@ export default {
             this.processClick();
             this.cubeLoop();
             this.resetScene();
+            this.changeSiteMode();
         },
 		resizeHandler() {
 			let width = window.innerWidth,
@@ -207,15 +200,63 @@ export default {
                 this.currLoop++;
             }
         },
+
+        bgStars(){
+            this.geometryMesh = new THREE.BufferGeometry();
+            let position = [];
+            let size = [];
+            //quadrant 1
+            for (var i = 0; i < 50; i++) {
+                position.push(Math.random() * 100); // X
+                position.push(Math.random() * 60); // Y
+                position.push(Math.random() * 10); // Z
+                size.push(Math.random() * 15); // Z
+            }
+        
+            
+            this.materialMesh.fragmentShader = this.fragmentShader;
+            this.geometryMesh.setAttribute("position", new THREE.BufferAttribute(new Float32Array(position), 3));
+            this.geometryMesh.setAttribute("size", new THREE.BufferAttribute(new Float32Array(size), 1));
+            this.meshStars = new THREE.Points(this.geometryMesh, this.materialMesh);
+            this.meshStars.position.set(-50, -40, -30);
+            this.meshStars.name = "backgroundStars";
+            this.scene.add(this.meshStars);
+        },
+
+        changeSiteMode(){
+        if(this.currMode == this.siteMode){
+            if(this.siteMode == true){
+                //light mode
+                console.log('light mode');
+                 this.scene.background = new THREE.Color(0xf7e99c);
+                 
+            }
+            else {
+                //dark mode
+                console.log('dark mode');
+                this.scene.background = new THREE.Color(0x171137);
+                 this.bgStars();
+            }
+
+                  if(this.currMode == true){
+                        this.currMode = false;
+                    }
+                    else{
+                        this.currMode = true;
+                    }
+        }
+        },
+
         resetScene(){
             if(this.userReset == true){
                 //try to fix user reset first
                 while(this.scene.children.length > 0){ 
-                  this.scene.remove(this.scene.children[0]); 
+                     this.scene.remove(this.scene.children[0]); 
                 }
+
                 if (this.scene.children.length == 0) {
                     this.userReset = false;
-                    //this.initAddToScene();
+                    this.initAddToScene();
                     //seperate init into two functions, one with things needed to add to scene, and one with nessesary things
                 }
             }
