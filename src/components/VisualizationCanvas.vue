@@ -7,7 +7,9 @@
 <script>
 import * as THREE from 'three'
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import { MathUtils } from "three/src/math/MathUtils.js"
+import { MathUtils } from "three/src/math/MathUtils.js";
+import { Sky } from '../assets/Sky.js';
+
 
 // import { GUI } from "../node_modules/three/examples/jsm/libs/dat.gui.module.js";
 // import { EffectComposer } from "../node_modules/three/examples/jsm/postprocessing/EffectComposer.js";
@@ -48,7 +50,11 @@ export default {
         fragmentShaderGlass: ` `,
         vertexShaderGlass: ` `,
         currMode: true,
-        currNumVertex: 50
+        currNumVertex: 50,
+        effectController: null,
+        sky: null,
+        sun: null,
+        uniforms: null,
 
     }),
     mounted() {
@@ -179,9 +185,49 @@ export default {
             this.glassCube();
             this.addControls();
            this.bgStars();
-
+            this.initSky();
            
         },
+
+        initSky() {
+                
+				// Add Sky
+				this.sky = new Sky();
+				this.sky.scale.setScalar( 450000 );
+                this.scene.add( this.sky );
+                
+                this.effectController = {
+					turbidity: 10,
+					rayleigh: 3,
+					mieCoefficient: 0.005,
+					mieDirectionalG: 0.7,
+					inclination: 0.49, // elevation / inclination
+					azimuth: 0.25, // Facing front,
+					exposure: this.renderer.toneMappingExposure
+                };
+                
+                this.uniforms = this.sky.material.uniforms;
+				this.uniforms[ "turbidity" ].value = this.effectController.turbidity;
+				this.uniforms[ "rayleigh" ].value = this.effectController.rayleigh;
+				this.uniforms[ "mieCoefficient" ].value = this.effectController.mieCoefficient;
+				this.uniforms[ "mieDirectionalG" ].value = this.effectController.mieDirectionalG;
+
+                this.initSun();
+            },
+            
+        initSun(){
+            
+                this.sun = new THREE.Vector3();
+                this.sun.name = "siteSun";
+                const theta = Math.PI * ( this.effectController.inclination - 0.5 );
+				const phi = 2 * Math.PI * ( this.effectController.azimuth - 0.5 );
+                this.sun.x = Math.cos( phi );
+				this.sun.y = Math.sin( phi ) * Math.sin( theta );
+				this.sun.z = Math.sin( phi ) * Math.cos( theta );
+
+				this.uniforms[ "sunPosition" ].value.copy( this.sun );
+        },     
+
 
         renderLoop(){
             requestAnimationFrame(this.renderLoop);
@@ -330,17 +376,19 @@ export default {
         },
         changeSiteMode(){
         if(this.currMode == this.siteMode){
+            this.scene.remove(this.scene.getObjectByName("siteSun"));
             if(this.siteMode == true){
                 //light mode
                 console.log('light mode');
-                 this.scene.background = new THREE.Color(0xf7e99c);
+                this.effectController.azimuth = 0.25;
+                this.initSun();
                  
             }
             else {
                 //dark mode
                 console.log('dark mode');
-                this.scene.background = new THREE.Color(0x171137);
-                 this.bgStars();
+                this.effectController.azimuth = -1.25;
+                this.initSun();
             }
 
                   if(this.currMode == true){
