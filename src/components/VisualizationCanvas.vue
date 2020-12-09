@@ -184,7 +184,7 @@ export default {
             this.numVertex = 50;
             this.glassCube();
             this.addControls();
-           this.bgStars();
+            //this.bgStars();
             this.initSky();
            
         },
@@ -317,7 +317,6 @@ export default {
             this.geometryMesh.setAttribute("size", new THREE.BufferAttribute(new Float32Array(size), 1));
             this.meshStars = new THREE.Points(this.geometryMesh, this.materialMesh);
             this.meshStars.name = "backgroundStars";
-            //
             this.meshStars.position.set(-50, -40, -30);
             this.scene.add(this.meshStars);
             
@@ -382,6 +381,7 @@ export default {
                 console.log('light mode');
                 this.effectController.azimuth = 0.25;
                 this.initSun();
+                this.scene.remove(this.scene.getObjectByName("backgroundStars"));
                  
             }
             else {
@@ -389,6 +389,7 @@ export default {
                 console.log('dark mode');
                 this.effectController.azimuth = -1.25;
                 this.initSun();
+                this.bgStars();
             }
 
                   if(this.currMode == true){
