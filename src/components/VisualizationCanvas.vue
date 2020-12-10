@@ -68,6 +68,8 @@ export default {
     }),
     mounted() {
         this.init();
+        this.animate();
+
     },
     methods:{
         init(){
@@ -182,12 +184,19 @@ export default {
 				gl_FragColor = color;
 
             }`;
+             this.materialGlass = new THREE.RawShaderMaterial( {
+                uniforms: {time: { type: "f", value: 1.0 }},
+                vertexShader: this.vertexShaderGlass,
+                fragmentShader: this.fragmentShaderGlass,
+                side: THREE.DoubleSide,
+                transparent: true
+            });
+
             this.initAddToScene();
             // this.scene.add(mesh);
             
             // this.addControls();
             // this.renderLoop();
-            this.renderLoop();
         },
         initAddToScene(){
             this.numVertex = 50;
@@ -236,10 +245,13 @@ export default {
 				this.sun.z = Math.sin( phi ) * Math.cos( theta );
 
 				this.uniforms[ "sunPosition" ].value.copy( this.sun );
+        },
+        animate(){
+            requestAnimationFrame(this.animate);
+            this.renderLoop();
         },     
         renderLoop(){
-            requestAnimationFrame(this.renderLoop);
-            this.materialMesh.uniforms.time.value += 0.5;
+            this.materialMesh.uniforms.time.value += 0.1;
 
             this.cubes.forEach((cube, ndx) => {
             const speed = .01 + ndx * 0.1;
@@ -248,9 +260,15 @@ export default {
             });
 
             //rotate glass
-            
-            // this.materialGlass.rotation.y += 0.0005;
-            // this.materialGlass.uniforms.time.value +=.05;
+            this.scene.children.forEach((object,ndx) => {
+                if (object.name == "glassThing" || object.name == "wf") {
+                const speed = 0.001 +ndx * 0.001;
+                object.rotation.x += speed;
+                object.rotation.z += speed;
+                }
+            });
+
+            this.materialGlass.uniforms.time.value +=.05;
 
 
             this.renderer.render(this.scene, this.camera)
@@ -363,20 +381,9 @@ export default {
 
                 // material
 
-                this.materialGlass = new THREE.RawShaderMaterial( {
-
-                    uniforms: {
-                        time: { value: 1.0 }
-                    },
-                    vertexShader: this.vertexShaderGlass,
-                    fragmentShader: this.fragmentShaderGlass,
-                    side: THREE.DoubleSide,
-                    transparent: true
-
-                } );
 
                 this.meshGlass = new THREE.Mesh( geometryGlass, this.materialGlass );
-                this.meshGlass.name = "glass";
+                this.meshGlass.name = "glassThing";
                 this.scene.add( this.meshGlass );
                 this.currNumVertex += 50;
                 // console.log("currNumVertex:" + this.currNumVertex);
@@ -423,14 +430,16 @@ export default {
                 if (this.scene.children.length == 0) {
                     this.userReset = false;
                     this.initAddToScene();
-                    this.currNumVertex = 50;
+                    this.scene.add( this.meshGlass );
+                    this.currNumVertex = 100;
+                    this.orbitControls.reset();
 
                     //seperate init into two functions, one with things needed to add to scene, and one with nessesary things
                 }
             }
         },
         newGeometry(){
-                const radius = 0.5;
+                const radius = 0.75;
                 this.detail = this.sh;
                 const geometry = new THREE.OctahedronBufferGeometry(radius, this.detail);
                 const wireframeMaterial = new THREE.MeshBasicMaterial( { color: 0xffffff, opacity: 0.3, wireframe: true, transparent: true } );
@@ -442,7 +451,7 @@ export default {
             if(this.detail != this.sh || this.randColor != this.wfColor){
                 this.wfColor = this.randColor;
                 this.scene.remove(this.scene.getObjectByName("wf"));
-                const radius = 0.5;
+                const radius = 0.75;
                 this.detail = this.sh;
                 const geometry = new THREE.OctahedronBufferGeometry(radius, this.detail);
                 const wireframeMaterial = new THREE.MeshBasicMaterial( { color: this.wfColor, opacity: 0.3, wireframe: true, transparent: false } );
