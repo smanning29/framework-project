@@ -26,6 +26,7 @@ export default {
         numVertex: Number,
         sw: Number,
         sh: Number,
+        randColor: String,
     },
     data: () => ({
         scene: null,
@@ -261,7 +262,7 @@ export default {
             this.resetScene(this.userReset);
             this.changeSiteMode();
             this.glassCube();
-            this.updateGeometry();
+            this.updateGeometry(this.randColor);
             // console.log("resetbool:" + this.userReset);
         },
 		resizeHandler() {
@@ -439,20 +440,19 @@ export default {
                 this.scene.add(mesh);
                 mesh.name = "wf";
         },
-        updateGeometry(){
+        updateGeometry(randomColor){
             if(this.widthSegments != this.sw || this.heightSegments != this.sh){
                 this.scene.remove(this.scene.getObjectByName("wf"));
-               const radius = 0.5;
+                const radius = 0.5;
                 const detail = this.sh;
                 const geometry = new THREE.OctahedronBufferGeometry(radius, detail);
-                const wireframeMaterial = new THREE.MeshBasicMaterial( { color: 0x000000, opacity: 0.3, wireframe: true, transparent: true } );
+                const wireframeMaterial = new THREE.MeshBasicMaterial( { color: randomColor, opacity: 0.3, wireframe: true, transparent: false } );
                 var mesh = new THREE.Mesh(geometry, wireframeMaterial);
                 this.scene.add(mesh);
                 mesh.name = "wf";
                 this.newShape = false;
             }
-        }
-
+        },
     }
   
 }
