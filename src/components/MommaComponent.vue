@@ -46,6 +46,7 @@ export default {
       updateShape: false,
       imgUrl: "../assest/light.png",
       randomColor: "rgb(255,255,255)",
+      heightChange: 1,
     }
   },
   methods: {
@@ -69,12 +70,12 @@ export default {
         this.numVerticies += 50;
     },
     incHeight(){ //actually detail
-      if(this.shapeHeight < 5){
-        this.shapeHeight += 1;
+      
+      if(this.shapeHeight % 8 == 0){
+        this.heightChange *= -1;
       }
-      else if(this.shapeHeight > 5){
-        this.shapeHeight -= 1;
-      }
+      console.log(this.shapeHeight)
+      this.shapeHeight += this.heightChange;
     },
     randomColorGen(){
       const r = Math.floor(Math.random() * 256);
