@@ -1,6 +1,5 @@
 <template>
   <div id="VisualizationCanvas">
-      
   </div>
 </template>
 
@@ -9,6 +8,7 @@ import * as THREE from 'three'
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { MathUtils } from "three/src/math/MathUtils.js";
 import { Sky } from '../assets/Sky.js';
+// import TWEEN from "https://cdnjs.cloudflare.com/ajax/libs/gsap/2.1.2/TweenMax.min.js";
 
 
 // import { GUI } from "../node_modules/three/examples/jsm/libs/dat.gui.module.js";
@@ -69,7 +69,6 @@ export default {
     mounted() {
         this.init();
         this.animate();
-
     },
     methods:{
         init(){
@@ -82,7 +81,7 @@ export default {
 			this.scene.fog = new THREE.Fog(0xffffff, 0, 750);
 			//Camera
 			this.camera = new THREE.PerspectiveCamera(70, width / height, 0.1, 1000);
-			this.camera.position.z = 0.1;
+			this.camera.position.z = 250;
             
 			//Renderer
 			this.renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -147,7 +146,7 @@ export default {
 
             //setup shader for glass cube
             this.vertexShaderGlass = `
-           precision mediump float;
+            precision mediump float;
 			precision mediump int;
 
 			uniform mat4 modelViewMatrix; // optional
@@ -167,8 +166,8 @@ export default {
 				gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
 
 			}`;
-            this.fragmentShaderGlass = `
-           	precision mediump float;
+            this.fragmentShaderGlass = 
+            `precision mediump float;
 			precision mediump int;
 
 			uniform float time;
@@ -191,6 +190,9 @@ export default {
                 side: THREE.DoubleSide,
                 transparent: true
             });
+
+            //camera transition; https://jsfiddle.net/rsf3h9yo/1/
+
 
             this.initAddToScene();
             // this.scene.add(mesh);
@@ -266,6 +268,9 @@ export default {
                 object.rotation.x += speed;
                 object.rotation.z += speed;
                 }
+                if (object.name == "backgroundStars") {
+                    object.rotation.z+= 0.0001;
+                }
             });
 
             this.materialGlass.uniforms.time.value +=.05;
@@ -290,6 +295,8 @@ export default {
         },
         addControls() {
             this.orbitControls = new OrbitControls(this.camera, this.renderer.domElement);
+            this.orbitControls.maxDistance = 250.0;
+
             this.orbitControls.update();
         },
 		setMouseVector(event) {
@@ -461,6 +468,26 @@ export default {
             }
             
         },
+        //camera scene intro
+        //  tweenCamera( targetPosition ) {
+        //     this.orbitControls.enabled = false;
+
+        //     var position = new THREE.Vector3().copy( this.camera.position );
+
+        //     new TWEEN.Tween( position )
+		// 	.to({ x: 0, y: 0, z: 0.3 }, 2000)
+        //     .easing( TWEEN.Easing.Back.InOut )
+        //     .onUpdate( function () {
+		// 		this.camera.lookAt(this.scene.position);
+        //     } )
+        //     .onComplete( function () {
+        //         this.camera.position.copy( targetPosition );
+        //         this.camera.lookAt( this.orbitControls.target );
+        //         this.orbitControls.enabled = true;
+        //     } )
+        //     .start();
+        // },
+
     }
   
 }

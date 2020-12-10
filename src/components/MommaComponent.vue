@@ -17,7 +17,7 @@
     <Button v-on:click="incHeight()">
       Details
     </Button>
-    <Button v-on:click="userReset().then(userReset());">
+    <Button v-on:click="userReset();">
       Chaos mode
     </Button>
     </div>
@@ -51,7 +51,8 @@ export default {
   },
   methods: {
     userReset(){
-      this.resetCurr = true;
+      this.numVerticies = 50;
+      this.shapeHeight = 2;
     },
     userUnReset(){
       this.resetCurr = false;
