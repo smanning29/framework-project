@@ -248,8 +248,8 @@ export default {
 
             //rotate glass
             
-            // this.materialGlass.rotation.y = 1.1 * 0.0005;
-            // this.materialGlass.uniforms.time.value = 1.2 * 0.005;
+            // this.materialGlass.rotation.y += 0.0005;
+            // this.materialGlass.uniforms.time.value +=.05;
 
 
             this.renderer.render(this.scene, this.camera)
