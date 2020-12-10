@@ -296,7 +296,7 @@ export default {
         addControls() {
             this.orbitControls = new OrbitControls(this.camera, this.renderer.domElement);
             this.orbitControls.maxDistance = 250.0;
-
+            this.orbitControls.zoomSpeed = 2;
             this.orbitControls.update();
         },
 		setMouseVector(event) {
@@ -468,25 +468,6 @@ export default {
             }
             
         },
-        //camera scene intro
-        //  tweenCamera( targetPosition ) {
-        //     this.orbitControls.enabled = false;
-
-        //     var position = new THREE.Vector3().copy( this.camera.position );
-
-        //     new TWEEN.Tween( position )
-		// 	.to({ x: 0, y: 0, z: 0.3 }, 2000)
-        //     .easing( TWEEN.Easing.Back.InOut )
-        //     .onUpdate( function () {
-		// 		this.camera.lookAt(this.scene.position);
-        //     } )
-        //     .onComplete( function () {
-        //         this.camera.position.copy( targetPosition );
-        //         this.camera.lookAt( this.orbitControls.target );
-        //         this.orbitControls.enabled = true;
-        //     } )
-        //     .start();
-        // },
 
     }
   

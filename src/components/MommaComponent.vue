@@ -5,9 +5,7 @@
     <Button v-on:click="switchMode()">
      Day / Night
     </Button>
-    <ImageButton :img-src="this.imgUrl">
-
-    </ImageButton>
+    <img class= "imgButton" src="../assets/oof.png" v-on:click="randomColorGen()"/>
     <Button v-on:click="addVerticies()">
       Add Glass
     </Button>
@@ -90,6 +88,12 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+
+  .imgButton{
+    width: 75px;
+    height: auto;
+    cursor: pointer;
+  }
 
   .MommaComponent {
     width: 100vw;
