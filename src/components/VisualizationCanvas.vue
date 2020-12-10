@@ -433,16 +433,14 @@ export default {
                 const radius = 0.5;
                 this.detail = this.sh;
                 const geometry = new THREE.OctahedronBufferGeometry(radius, this.detail);
-                const wireframeMaterial = new THREE.MeshBasicMaterial( { color: 0x000000, opacity: 0.3, wireframe: true, transparent: true } );
+                const wireframeMaterial = new THREE.MeshBasicMaterial( { color: 0xffffff, opacity: 0.3, wireframe: true, transparent: true } );
                 var mesh = new THREE.Mesh(geometry, wireframeMaterial);
                 this.scene.add(mesh);
                 mesh.name = "wf";
         },
         updateGeometry(){
-            if(this.detail != this.sw){
-                if(this.randColor != this.wfColor){
+            if(this.detail != this.sh || this.randColor != this.wfColor){
                 this.wfColor = this.randColor;
-                }
                 this.scene.remove(this.scene.getObjectByName("wf"));
                 const radius = 0.5;
                 this.detail = this.sh;

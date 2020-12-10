@@ -69,11 +69,11 @@ export default {
         this.numVerticies += 50;
     },
     incHeight(){ //actually detail
-      if(this.shapeHeight< 5){
+      if(this.shapeHeight < 5){
         this.shapeHeight += 1;
       }
-      else if(this.shapeHeight==5){
-        this.shapeHeight = 1;
+      else if(this.shapeHeight > 5){
+        this.shapeHeight -= 1;
       }
     },
     randomColorGen(){
