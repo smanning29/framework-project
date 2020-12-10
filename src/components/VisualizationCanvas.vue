@@ -24,6 +24,8 @@ export default {
         userReset: Boolean,
         siteMode: Boolean,
         numVertex: Number,
+        sw: Number,
+        sh: Number,
     },
     data: () => ({
         scene: null,
@@ -55,6 +57,8 @@ export default {
         sky: null,
         sun: null,
         uniforms: null,
+        widthSegments: 5,
+        heightSegments: 5,
 
     }),
     mounted() {
@@ -71,7 +75,7 @@ export default {
 			this.scene.fog = new THREE.Fog(0xffffff, 0, 750);
 			//Camera
 			this.camera = new THREE.PerspectiveCamera(70, width / height, 0.1, 1000);
-			this.camera.position.z = 1;
+			this.camera.position.z = 0.1;
             
 			//Renderer
 			this.renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -89,8 +93,8 @@ export default {
 			this.hemisphereLight.groundColor.setHex(0x87775d);
 			this.hemisphereLight.position.set(0, 5, 0);
 			this.scene.add(this.hemisphereLight);
-			let hemiLightHelper = new THREE.HemisphereLightHelper(this.hemisphereLight, 10);
-			this.scene.add(hemiLightHelper);
+			//let hemiLightHelper = new THREE.HemisphereLightHelper(this.hemisphereLight, 10);
+			//this.scene.add(hemiLightHelper);
 			this.directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
 			this.directionalLight.color.setHSL(0.1, 1, 0.95);
 			this.directionalLight.position.set(-1, 1.75, 1);
@@ -182,7 +186,8 @@ export default {
         },
         initAddToScene(){
             this.numVertex = 50;
-            this.glassCube();
+            //this.glassCube();
+            this.newGeometry();
             this.addControls();
             //this.bgStars();
             this.initSky();
@@ -251,10 +256,11 @@ export default {
             this.renderer.render(this.scene, this.camera)
             this.orbitControls.update();
             this.processClick();
-            this.cubeLoop();
+            //this.cubeLoop();
             this.resetScene(this.userReset);
             this.changeSiteMode();
             this.glassCube();
+            this.updateGeometry();
             // console.log("resetbool:" + this.userReset);
         },
 		resizeHandler() {
@@ -422,7 +428,38 @@ export default {
                     //seperate init into two functions, one with things needed to add to scene, and one with nessesary things
                 }
             }
+        },
+        newGeometry(){
+                const radius = 0.5;
+                this.widthSegments = this.sw;
+                this.heightSegments = 10;
+                const sphereGeometry = new THREE.SphereBufferGeometry(
+                    radius, this.widthSegments, this.heightSegments);
+                const thresholdAngle =   1
+                const geometry = new THREE.EdgesGeometry(sphereGeometry, thresholdAngle);
+                const wireframeMaterial = new THREE.MeshBasicMaterial( { color: 0x000000, opacity: 0.3, wireframe: true, transparent: true } );
+                var mesh = new THREE.Mesh(geometry, wireframeMaterial);
+                this.scene.add(mesh);
+                mesh.name = "wf";
+        },
+        updateGeometry(){
+            if(this.widthSegments != this.sw || this.heightSegments != this.sh){
+                this.scene.remove(this.scene.getObjectByName("wf"));
+                const radius = 0.5;
+                this.widthSegments = this.sw;
+                this.heightSegments = this.sh;
+                const sphereGeometry = new THREE.SphereBufferGeometry(
+                    radius, this.widthSegments, this.heightSegments);
+                const thresholdAngle =   1
+                const geometry = new THREE.EdgesGeometry(sphereGeometry, thresholdAngle);
+                const wireframeMaterial = new THREE.MeshBasicMaterial( { color: 0x000000, opacity: 0.3, wireframe: true, transparent: true } );
+                var mesh = new THREE.Mesh(geometry, wireframeMaterial);
+                this.scene.add(mesh);
+                mesh.name = "wf";
+                this.newShape = false;
+            }
         }
+
     }
   
 }

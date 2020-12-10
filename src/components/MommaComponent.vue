@@ -1,15 +1,18 @@
 <template>
   <div class="MommaComponent">
-    <VisualizationCanvas v-bind:num-cubes="this.count" v-bind:user-reset="this.resetCurr" v-bind:site-mode="this.lightMode" v-bind:num-vertex="this.numVerticies" />
+    <VisualizationCanvas v-bind:user-reset="this.resetCurr" :site-mode="this.lightMode" :num-vertex="this.numVerticies" :sw="this.shapeWidth" :sh="this.shapeHeight"/>
     <div class="Buttons">
-    <Button v-on:click="increment()">
-      Duplicate
-    </Button>
     <Button v-on:click="switchMode()">
       Day / Night
     </Button>
     <Button v-on:click="addVerticies()">
       Add Glass
+    </Button>
+    <Button v-on:click="incWidth()">
+      Width
+    </Button>
+    <Button v-on:click="incHeight()">
+      Height
     </Button>
     <Button v-on:click="userReset().then(userReset());">
       Reset
@@ -34,7 +37,10 @@ export default {
       resetPrev: null,
       cubesInfo: [],
       lightMode: true,
-      numVerticies: 50
+      numVerticies: 50,
+      shapeWidth: 5,
+      shapeHeight: 5,
+      updateShape: false
     }
   },
   methods: {
@@ -60,6 +66,14 @@ export default {
     },
     addVerticies(){
         this.numVerticies += 50;
+    },
+    incWidth(){
+      this.shapeWidth += 1;
+      this.updateShape = true;
+    },
+    incHeight(){
+      this.shapeHeight += 1;
+      this.updateShape = true;
     }
   }
 }
