@@ -81,7 +81,7 @@ export default {
 			this.scene.fog = new THREE.Fog(0xffffff, 0, 750);
 			//Camera
 			this.camera = new THREE.PerspectiveCamera(70, width / height, 0.1, 1000);
-			this.camera.position.z = 250;
+			this.camera.position.z = 1;
             
 			//Renderer
 			this.renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -115,6 +115,9 @@ export default {
 			this.directionalLight.shadow.camera.top = d;
 			this.directionalLight.shadow.camera.bottom = -d;
             this.directionalLight.shadow.camera.far = 350;
+
+            //interesting objects
+
             
             //Resize handler
             window.addEventListener("resize", this.resizeHandler);
@@ -446,7 +449,7 @@ export default {
             }
         },
         newGeometry(){
-                const radius = 0.75;
+                const radius = 0.7;
                 this.detail = this.sh;
                 const geometry = new THREE.OctahedronBufferGeometry(radius, this.detail);
                 const wireframeMaterial = new THREE.MeshBasicMaterial( { color: 0xffffff, opacity: 0.3, wireframe: true, transparent: true } );
@@ -458,7 +461,7 @@ export default {
             if(this.detail != this.sh || this.randColor != this.wfColor){
                 this.wfColor = this.randColor;
                 this.scene.remove(this.scene.getObjectByName("wf"));
-                const radius = 0.75;
+                const radius = 0.7;
                 this.detail = this.sh;
                 const geometry = new THREE.OctahedronBufferGeometry(radius, this.detail);
                 const wireframeMaterial = new THREE.MeshBasicMaterial( { color: this.wfColor, opacity: 0.3, wireframe: true, transparent: false } );
@@ -468,6 +471,9 @@ export default {
             }
             
         },
+        createSpheres(){
+            
+        }
 
     }
   
