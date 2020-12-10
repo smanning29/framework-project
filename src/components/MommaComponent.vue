@@ -18,6 +18,8 @@
     <Button v-on:click="userReset();">
       Chaos mode
     </Button>
+    <input type="range" min="1" max="10" value="3">
+
     </div>
 
   </div>

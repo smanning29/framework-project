@@ -27,6 +27,7 @@ export default {
         sw: Number,
         sh: Number,
         randColor: String,
+        numSpheres: Number,
     },
     data: () => ({
         scene: null,
@@ -41,6 +42,7 @@ export default {
         ambientLight: null,
 		hemisphereLight: null,
         cubes:[],
+        spheres:[],
         cubeMaterial: null,
         materialMesh: null, //can delete later
         lastX: 0,
@@ -210,6 +212,7 @@ export default {
             this.addControls();
             //this.bgStars();
             this.initSky();
+            this.createSpheres(5);
            
         },
 
@@ -256,13 +259,19 @@ export default {
             this.renderLoop();
         },     
         renderLoop(){
+            var time = performance.now();
             this.materialMesh.uniforms.time.value += 0.1;
 
-            this.cubes.forEach((cube, ndx) => {
-            const speed = .01 + ndx * 0.1;
-			cube.rotation.x += speed;
-			cube.rotation.y += speed;
-            });
+            this.spheres.forEach((cube, ndx) => {
+            const speed = .0005 + ndx * 0.0001;
+            cube.position.x = Math.cos( time * speed ) * 1;
+            cube.position.y = Math.sin( time * speed ) * 1;
+            cube.position.z = Math.sin( time * speed ) * 1;
+
+            // cube.rotation.x += speed;
+            // cube.rotation.y += speed;
+            // cube.rotation.z += speed;
+        });
 
             //rotate glass
             this.scene.children.forEach((object,ndx) => {
@@ -369,9 +378,9 @@ export default {
                 for ( let i = 0; i < vertexCount; i ++ ) {
 
                     // adding x,y,z
-                    positions.push( Math.random() - 0.5 );
-                    positions.push( Math.random() - 0.5 );
-                    positions.push( Math.random() - 0.5 );
+                    positions.push( Math.random() - 0.50 );
+                    positions.push( Math.random() - 0.45 );
+                    positions.push( Math.random() - 0.55 );
 
                     // adding r,g,b,a
                     colors.push( Math.random() * 255 );
@@ -449,7 +458,7 @@ export default {
             }
         },
         newGeometry(){
-                const radius = 0.7;
+                const radius = 0.65;
                 this.detail = this.sh;
                 const geometry = new THREE.OctahedronBufferGeometry(radius, this.detail);
                 const wireframeMaterial = new THREE.MeshBasicMaterial( { color: 0xffffff, opacity: 0.3, wireframe: true, transparent: true } );
@@ -461,7 +470,7 @@ export default {
             if(this.detail != this.sh || this.randColor != this.wfColor){
                 this.wfColor = this.randColor;
                 this.scene.remove(this.scene.getObjectByName("wf"));
-                const radius = 0.7;
+                const radius = 0.65;
                 this.detail = this.sh;
                 const geometry = new THREE.OctahedronBufferGeometry(radius, this.detail);
                 const wireframeMaterial = new THREE.MeshBasicMaterial( { color: this.wfColor, opacity: 0.3, wireframe: true, transparent: false } );
@@ -471,8 +480,22 @@ export default {
             }
             
         },
-        createSpheres(){
-            
+        createSpheres(count){
+
+                for (let i = 0; i < count; i++) {
+                const geometry = new THREE.SphereBufferGeometry( .1, .1, .1 );
+                geometry.thetaStart = 2;
+                const material = new THREE.MeshBasicMaterial( {color: 0xffb3ff, opacity: 0.3, transparent: true} );
+                const sphere = new THREE.Mesh( geometry, material );
+                sphere.name = "sphere"+ i;
+                sphere.position.set(.5,.5,.5);
+                // sphere.position.setFromSphericalCoords(0.001 * i, THREE.Math.degToRad(360/ count) * i, count/360 * i);
+                sphere.lookAt(sphere.position);
+                this.spheres.push(sphere);
+                this.scene.add(sphere);
+
+                }
+
         }
 
     }
