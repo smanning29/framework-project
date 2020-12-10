@@ -83,7 +83,7 @@ export default {
 			this.scene.fog = new THREE.Fog(0xffffff, 0, 750);
 			//Camera
 			this.camera = new THREE.PerspectiveCamera(70, width / height, 0.1, 1000);
-			this.camera.position.z = 1;
+			this.camera.position.z = 0.5;
             
 			//Renderer
 			this.renderer = new THREE.WebGLRenderer({ antialias: true });

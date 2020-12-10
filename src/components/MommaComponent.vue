@@ -2,24 +2,22 @@
   <div class="MommaComponent">
     <VisualizationCanvas v-bind:user-reset="this.resetCurr" :site-mode="this.lightMode" :num-vertex="this.numVerticies" :sw="this.shapeWidth" :sh="this.shapeHeight" :rand-color="this.randomColor"/>
     <div class="Buttons">
-    <Button v-on:click="switchMode()">
-     Day / Night
-    </Button>
-    <img class= "imgButton" src="../assets/oof.png" v-on:click="randomColorGen()"/>
-    <Button v-on:click="addVerticies()">
-      Add Glass
-    </Button>
-    <Button v-on:click="randomColorGen()">
-      Color
-    </Button>
-    <Button v-on:click="incHeight()">
-      Details
-    </Button>
-    <Button v-on:click="userReset();">
-      Chaos mode
-    </Button>
-    <input type="range" min="1" max="10" value="3">
-
+      <img class= "imgButton" src="../assets/dark.png" v-if="lightMode==true" v-on:click="switchMode()"/>
+      <img class= "imgButton" src="../assets/light.png" v-if="lightMode==false" v-on:click="switchMode()"/>
+      <Button v-on:click="addVerticies()">
+        Add Glass
+      </Button>
+      <Button v-on:click="randomColorGen()">
+        Color
+      </Button>
+      <div class="slidercontainer">
+        <label for="shapeSlider">Shape</label>
+        <input type="range" min="1" max="7" value="3" v-model.number="shapeHeight" id="shapeSlider" class="slider">
+      </div>
+    </div>
+    <div class="logo">
+      <a href="https://github.com/smanning29/framework-project" target="_blank">GLASS PLANET</a>
+      
     </div>
 
   </div>
@@ -42,7 +40,7 @@ export default {
       lightMode: true,
       numVerticies: 50,
       shapeWidth: 5,
-      shapeHeight: 1,
+      shapeHeight: 3,
       updateShape: false,
       imgUrl: "../assest/light.png",
       randomColor: "rgb(255,255,255)",
@@ -70,14 +68,14 @@ export default {
     addVerticies(){
         this.numVerticies += 50;
     },
-    incHeight(){ //actually detail
+    // incHeight(){ //actually detail
       
-      if(this.shapeHeight % 8 == 0){
-        this.heightChange *= -1;
-      }
-      console.log(this.shapeHeight)
-      this.shapeHeight += this.heightChange;
-    },
+    //   if(this.shapeHeight % 8 == 0){
+    //     this.heightChange *= -1;
+    //   }
+    //   console.log(this.shapeHeight)
+    //   this.shapeHeight += this.heightChange;
+    // },
     randomColorGen(){
       const r = Math.floor(Math.random() * 256);
       const g = Math.floor(Math.random() * 256);
@@ -90,11 +88,17 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
   .imgButton{
-    width: 75px;
+    width: 5%;
     height: auto;
     cursor: pointer;
+    padding: 2px;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin: 10px;
+    align-self: flex-start;
   }
 
   .MommaComponent {
@@ -108,18 +112,59 @@ export default {
   }
   .MommaComponent .Buttons{
     position: absolute;
+    width: 50%;
+    left: 0;
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: flex-start;
 
   }
  .MommaComponent .Buttons .btn {
   position: relative ;
-	margin: 2px;
+	margin: 10px;
 	font-size: 0.7em;
 	font-weight: 600;
 	text-transform: uppercase;
 }
+.MommaComponent .Buttons .slidercontainer{
+  margin: 10px;
+  padding: 2px;
+  display: flex;
+  flex-direction: column;
+  background-color: rgba(56, 0, 153, 0.45);
+  color: #fff;
+	border: none;
+	border-radius: 3px;
+	height: 40px;
+	cursor: pointer;
+	transition: all 150ms ease-out;
+  font-size: 0.7em;
+	font-weight: 600;
+	text-transform: uppercase;
+}
+.MommaComponent .logo {
+  position: absolute;
+    width: 50%;
+    right: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    font-family: 'Press Start 2P', cursive;
+    color: #fff;
+    padding: 20px;
+    font-size: 1.5em;
+}
+
+a:link, a:visited {
+  color: white;
+  text-decoration: none;
+  display: inline-block;
+}
+
+a:hover, a:active {
+  color: rgb(56, 0, 153);
+}
+
 
 
 </style>
