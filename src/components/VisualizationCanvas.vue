@@ -61,6 +61,8 @@ export default {
         widthSegments: 5,
         heightSegments: 5,
         detail: 1,
+        meshGlass: null,
+        materialGlass: null,
 
     }),
     mounted() {
@@ -234,8 +236,6 @@ export default {
 
 				this.uniforms[ "sunPosition" ].value.copy( this.sun );
         },     
-
-
         renderLoop(){
             requestAnimationFrame(this.renderLoop);
             this.materialMesh.uniforms.time.value += 0.5;
@@ -247,12 +247,9 @@ export default {
             });
 
             //rotate glass
-            // const time = performance.now();
-
-            // const object = this.scene.getObjectByName("glass");
-
-            // object.rotation.y = time * 0.0005;
-            // object.material.uniforms.time.value = time * 0.005;
+            
+            // this.materialGlass.rotation.y = 1.1 * 0.0005;
+            // this.materialGlass.uniforms.time.value = 1.2 * 0.005;
 
 
             this.renderer.render(this.scene, this.camera)
@@ -365,7 +362,7 @@ export default {
 
                 // material
 
-                const materialGlass = new THREE.RawShaderMaterial( {
+                this.materialGlass = new THREE.RawShaderMaterial( {
 
                     uniforms: {
                         time: { value: 1.0 }
@@ -377,9 +374,9 @@ export default {
 
                 } );
 
-                const meshGlass = new THREE.Mesh( geometryGlass, materialGlass );
-                meshGlass.name = "glass";
-                this.scene.add( meshGlass );
+                this.meshGlass = new THREE.Mesh( geometryGlass, this.materialGlass );
+                this.meshGlass.name = "glass";
+                this.scene.add( this.meshGlass );
                 this.currNumVertex += 50;
                 // console.log("currNumVertex:" + this.currNumVertex);
                 // console.log("NumVertex:" + this. numVertex)
