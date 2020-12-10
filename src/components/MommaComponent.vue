@@ -3,8 +3,11 @@
     <VisualizationCanvas v-bind:user-reset="this.resetCurr" :site-mode="this.lightMode" :num-vertex="this.numVerticies" :sw="this.shapeWidth" :sh="this.shapeHeight"/>
     <div class="Buttons">
     <Button v-on:click="switchMode()">
-      Day / Night
+     Day / Night
     </Button>
+    <ImageButton :img-src="this.imgUrl">
+
+    </ImageButton>
     <Button v-on:click="addVerticies()">
       Add Glass
     </Button>
@@ -40,7 +43,8 @@ export default {
       numVerticies: 50,
       shapeWidth: 5,
       shapeHeight: 1,
-      updateShape: false
+      updateShape: false,
+      imgUrl: "../assest/light.png"
     }
   },
   methods: {
