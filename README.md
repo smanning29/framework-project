@@ -1,4 +1,4 @@
-# framework-project
+# Glass Planet
 
 ## About this project
 
