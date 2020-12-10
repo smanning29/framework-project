@@ -3,19 +3,22 @@
     <VisualizationCanvas v-bind:user-reset="this.resetCurr" :site-mode="this.lightMode" :num-vertex="this.numVerticies" :sw="this.shapeWidth" :sh="this.shapeHeight" :rand-color="this.randomColor"/>
     <div class="Buttons">
     <Button v-on:click="switchMode()">
-      Day / Night
+     Day / Night
     </Button>
+    <ImageButton :img-src="this.imgUrl">
+
+    </ImageButton>
     <Button v-on:click="addVerticies()">
       Add Glass
     </Button>
-    <Button v-on:click="incWidth()">
-      Width
+    <Button v-on:click="randomColorGen()">
+      Color
     </Button>
-    <Button v-on:click="incHeight(); randomColorGen()">
+    <Button v-on:click="incHeight()">
       Details
     </Button>
     <Button v-on:click="userReset().then(userReset());">
-      Reset
+      Chaos mode
     </Button>
     </div>
 
@@ -41,14 +44,11 @@ export default {
       shapeWidth: 5,
       shapeHeight: 1,
       updateShape: false,
-      randomColor: null,
+      imgUrl: "../assest/light.png",
+      randomColor: "rgb(255,255,255)",
     }
   },
   methods: {
-    increment(){
-      this.count++;
-      this.cubesInfo[0] = this.count;
-    },
     userReset(){
       this.resetCurr = true;
     },
@@ -68,13 +68,13 @@ export default {
     addVerticies(){
         this.numVerticies += 50;
     },
-    incWidth(){
-      this.shapeWidth += 1;
-      this.updateShape = true;
-    },
-    incHeight(){
-      this.shapeHeight += 1;
-      this.updateShape = true;
+    incHeight(){ //actually detail
+      if(this.shapeHeight< 5){
+        this.shapeHeight += 1;
+      }
+      else if(this.shapeHeight==5){
+        this.shapeHeight = 1;
+      }
     },
     randomColorGen(){
       const r = Math.floor(Math.random() * 256);
