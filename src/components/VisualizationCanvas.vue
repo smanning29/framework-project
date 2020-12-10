@@ -61,6 +61,7 @@ export default {
         widthSegments: 5,
         heightSegments: 5,
         detail: 1,
+        wfColor: "rgb(255,255,255)",
 
     }),
     mounted() {
@@ -262,7 +263,7 @@ export default {
             this.resetScene(this.userReset);
             this.changeSiteMode();
             this.glassCube();
-            this.updateGeometry(this.randColor);
+            this.updateGeometry();
             // console.log("resetbool:" + this.userReset);
         },
 		resizeHandler() {
@@ -433,25 +434,28 @@ export default {
         },
         newGeometry(){
                 const radius = 0.5;
-                const detail = this.sh;
-                const geometry = new THREE.OctahedronBufferGeometry(radius, detail);
+                this.detail = this.sh;
+                const geometry = new THREE.OctahedronBufferGeometry(radius, this.detail);
                 const wireframeMaterial = new THREE.MeshBasicMaterial( { color: 0x000000, opacity: 0.3, wireframe: true, transparent: true } );
                 var mesh = new THREE.Mesh(geometry, wireframeMaterial);
                 this.scene.add(mesh);
                 mesh.name = "wf";
         },
-        updateGeometry(randomColor){
-            if(this.widthSegments != this.sw || this.heightSegments != this.sh){
+        updateGeometry(){
+            if(this.detail != this.sw){
+                if(this.randColor != this.wfColor){
+                this.wfColor = this.randColor;
+                }
                 this.scene.remove(this.scene.getObjectByName("wf"));
                 const radius = 0.5;
-                const detail = this.sh;
-                const geometry = new THREE.OctahedronBufferGeometry(radius, detail);
-                const wireframeMaterial = new THREE.MeshBasicMaterial( { color: randomColor, opacity: 0.3, wireframe: true, transparent: false } );
+                this.detail = this.sh;
+                const geometry = new THREE.OctahedronBufferGeometry(radius, this.detail);
+                const wireframeMaterial = new THREE.MeshBasicMaterial( { color: this.wfColor, opacity: 0.3, wireframe: true, transparent: false } );
                 var mesh = new THREE.Mesh(geometry, wireframeMaterial);
                 this.scene.add(mesh);
                 mesh.name = "wf";
-                this.newShape = false;
             }
+            
         },
     }
   
