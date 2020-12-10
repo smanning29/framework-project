@@ -18,7 +18,7 @@
       Details
     </Button>
     <Button v-on:click="userReset().then(userReset());">
-      Reset
+      Chaos mode
     </Button>
     </div>
 
