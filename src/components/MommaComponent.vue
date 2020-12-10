@@ -12,7 +12,7 @@
       Width
     </Button>
     <Button v-on:click="incHeight()">
-      Height
+      Details
     </Button>
     <Button v-on:click="userReset().then(userReset());">
       Reset
@@ -39,7 +39,7 @@ export default {
       lightMode: true,
       numVerticies: 50,
       shapeWidth: 5,
-      shapeHeight: 5,
+      shapeHeight: 1,
       updateShape: false
     }
   },

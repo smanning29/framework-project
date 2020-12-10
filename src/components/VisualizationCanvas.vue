@@ -59,6 +59,7 @@ export default {
         uniforms: null,
         widthSegments: 5,
         heightSegments: 5,
+        detail: 1,
 
     }),
     mounted() {
@@ -431,12 +432,8 @@ export default {
         },
         newGeometry(){
                 const radius = 0.5;
-                this.widthSegments = this.sw;
-                this.heightSegments = 10;
-                const sphereGeometry = new THREE.SphereBufferGeometry(
-                    radius, this.widthSegments, this.heightSegments);
-                const thresholdAngle =   1
-                const geometry = new THREE.EdgesGeometry(sphereGeometry, thresholdAngle);
+                const detail = this.sh;
+                const geometry = new THREE.OctahedronBufferGeometry(radius, detail);
                 const wireframeMaterial = new THREE.MeshBasicMaterial( { color: 0x000000, opacity: 0.3, wireframe: true, transparent: true } );
                 var mesh = new THREE.Mesh(geometry, wireframeMaterial);
                 this.scene.add(mesh);
@@ -445,13 +442,9 @@ export default {
         updateGeometry(){
             if(this.widthSegments != this.sw || this.heightSegments != this.sh){
                 this.scene.remove(this.scene.getObjectByName("wf"));
-                const radius = 0.5;
-                this.widthSegments = this.sw;
-                this.heightSegments = this.sh;
-                const sphereGeometry = new THREE.SphereBufferGeometry(
-                    radius, this.widthSegments, this.heightSegments);
-                const thresholdAngle =   1
-                const geometry = new THREE.EdgesGeometry(sphereGeometry, thresholdAngle);
+               const radius = 0.5;
+                const detail = this.sh;
+                const geometry = new THREE.OctahedronBufferGeometry(radius, detail);
                 const wireframeMaterial = new THREE.MeshBasicMaterial( { color: 0x000000, opacity: 0.3, wireframe: true, transparent: true } );
                 var mesh = new THREE.Mesh(geometry, wireframeMaterial);
                 this.scene.add(mesh);
