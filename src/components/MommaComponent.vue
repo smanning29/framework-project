@@ -1,6 +1,6 @@
 <template>
   <div class="MommaComponent">
-    <VisualizationCanvas v-bind:user-reset="this.resetCurr" :site-mode="this.lightMode" :num-vertex="this.numVerticies" :sw="this.shapeWidth" :sh="this.shapeHeight" :rand-color="this.randomColor"/>
+    <VisualizationCanvas v-bind:user-reset="this.resetCurr" :site-mode="this.lightMode" :num-vertex="this.numVerticies" :sw="this.shapeRadius" :sh="this.shapeHeight" :rand-color="this.randomColor"/>
     <div class="Buttons">
       <img class= "imgButton" src="../assets/dark.png" v-if="lightMode==true" v-on:click="switchMode()"/>
       <img class= "imgButton" src="../assets/light.png" v-if="lightMode==false" v-on:click="switchMode()"/>
@@ -12,7 +12,11 @@
       </Button>
       <div class="slidercontainer">
         <label for="shapeSlider">Shape</label>
-        <input type="range" min="1" max="7" value="3" v-model.number="shapeHeight" id="shapeSlider" class="slider">
+        <input type="range" min="1" max="7" value="1" v-model.number="shapeHeight" id="shapeSlider" class="slider">
+      </div>
+      <div class="slidercontainer">
+        <label for="sizeSlider">Size</label>
+        <input type="range" min="1.5" max="5.5" value="1.5" v-model.number="shapeRadius" id="sizeSlider" class="slider">
       </div>
     </div>
     <div class="logo">
@@ -39,7 +43,7 @@ export default {
       cubesInfo: [],
       lightMode: true,
       numVerticies: 50,
-      shapeWidth: 5,
+      shapeRadius: 5,
       shapeHeight: 3,
       updateShape: false,
       imgUrl: "../assest/light.png",
